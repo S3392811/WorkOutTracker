@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "83601965481",
+    "project_id": "workouttacker-875ae",
+    "storage_bucket": "workouttacker-875ae.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:83601965481:android:cc7864916738a2447904b8",
+        "android_client_info": {
+          "package_name": "com.example.workouttracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAy31_81hxZSa8wTTgsHaAUvNR7mNdJJjk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

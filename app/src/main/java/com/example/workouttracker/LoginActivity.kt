@@ -1,8 +1,10 @@
 package com.example.workouttracker
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -33,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.firebase.database.FirebaseDatabase
 
 class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +73,9 @@ fun LoginScreen() {
                 verticalAlignment = Alignment.CenterVertically,
             )
             {
-                Column() {
+                Column(modifier = Modifier.clickable {
+
+                }) {
 
                     Text(
                         text = "Welcome!",
@@ -92,7 +97,7 @@ fun LoginScreen() {
                 Image(
                     modifier = Modifier.size(100.dp),
                     painter = painterResource(id = R.drawable.ic_workout_two),
-                    contentDescription = "Grocery Store Manager",
+                    contentDescription = "Workout Tracker",
                 )
 
             }
@@ -106,7 +111,7 @@ fun LoginScreen() {
                     .background(color = colorResource(id = R.color.white)),
                 value = useremail,
                 onValueChange = { useremail = it },
-                placeholder = { Text("User Name") },
+                placeholder = { Text("Email") },
 
                 leadingIcon = {
                     Image(
@@ -142,10 +147,35 @@ fun LoginScreen() {
 
             Image(
                 modifier = Modifier
+                    .clickable {
+                        when {
+                            useremail.isEmpty() -> {
+//                            Toast.makeText(context, " Please Enter Mail", Toast.LENGTH_SHORT).show()
+                            }
+
+                            userpassword.isEmpty() -> {
+//                            Toast.makeText(context, " Please Enter Password", Toast.LENGTH_SHORT)
+//                                .show()
+                            }
+
+                            else -> {
+                                val personDetails = PersonDetails(
+                                    "",
+                                    useremail,
+                                    "",
+                                    "",
+                                    userpassword
+                                )
+
+                                loginUser(personDetails,context)
+                            }
+
+                        }
+                    }
                     .size(50.dp)
                     .align(Alignment.CenterHorizontally),
                 painter = painterResource(id = R.drawable.ic_right_arrow),
-                contentDescription = "Grocery Store Manager",
+                contentDescription = "Workout Tracker",
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -186,6 +216,37 @@ fun LoginScreen() {
     }
 
 }
+
+fun loginUser(personDetails: PersonDetails, context: Context) {
+
+    val firebaseDatabase = FirebaseDatabase.getInstance()
+    val databaseReference = firebaseDatabase.getReference("PersonDetails").child(personDetails.emailid.replace(".", ","))
+
+    databaseReference.get().addOnCompleteListener { task ->
+        if (task.isSuccessful) {
+            val donorData = task.result?.getValue(PersonDetails::class.java)
+            if (donorData != null) {
+                if (donorData.password == personDetails.password) {
+
+                    Toast.makeText(context, "Login Sucessfully", Toast.LENGTH_SHORT).show()
+
+                } else {
+                    Toast.makeText(context, "Seems Incorrect Credentials", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(context, "Your account not found", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(
+                context,
+                "Something went wrong",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable

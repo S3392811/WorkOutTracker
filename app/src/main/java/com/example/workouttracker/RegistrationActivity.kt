@@ -1,8 +1,10 @@
 package com.example.workouttracker
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -27,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -34,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.firebase.database.FirebaseDatabase
 
 class RegistrationActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,14 +75,16 @@ fun RegistrationScreen() {
 //            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(50.dp))
 
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             )
             {
-                Column() {
+                Column(modifier = Modifier.clickable {
+
+                }) {
 
                     Text(
                         text = "Register!",
@@ -98,9 +104,14 @@ fun RegistrationScreen() {
                 Spacer(modifier = Modifier.weight(1f))
 
                 Image(
-                    modifier = Modifier.size(100.dp),
+                    modifier = Modifier
+                        .clickable {
+
+
+                        }
+                        .size(100.dp),
                     painter = painterResource(id = R.drawable.ic_workout_two),
-                    contentDescription = "Grocery Store Manager",
+                    contentDescription = "Workout Tracker",
                 )
 
             }
@@ -210,6 +221,43 @@ fun RegistrationScreen() {
 
             Image(
                 modifier = Modifier
+                    .clickable {
+                        when {
+                            useremail.isEmpty() -> {
+//                            Toast.makeText(context, " Please Enter Mail", Toast.LENGTH_SHORT).show()
+                            }
+
+                            userName.isEmpty() -> {
+//                            Toast.makeText(context, " Please Enter Password", Toast.LENGTH_SHORT)
+//                                .show()
+                            }
+                            userAge.isEmpty() -> {
+//                            Toast.makeText(context, " Please Enter Password", Toast.LENGTH_SHORT)
+//                                .show()
+                            }
+                            userWeight.isEmpty() -> {
+//                            Toast.makeText(context, " Please Enter Password", Toast.LENGTH_SHORT)
+//                                .show()
+                            }
+                            userpassword.isEmpty() -> {
+//                            Toast.makeText(context, " Please Enter Password", Toast.LENGTH_SHORT)
+//                                .show()
+                            }
+
+                            else -> {
+                                val personDetails = PersonDetails(
+                                    userName,
+                                    useremail,
+                                    userAge,
+                                    userWeight,
+                                    userpassword
+                                )
+                                registerUser(personDetails,context);
+                            }
+
+                        }
+
+                    }
                     .size(50.dp)
                     .align(Alignment.CenterHorizontally),
                 painter = painterResource(id = R.drawable.ic_right_arrow),
@@ -255,6 +303,43 @@ fun RegistrationScreen() {
     }
 
 }
+
+fun registerUser(personDetails: PersonDetails, context: Context) {
+
+    val firebaseDatabase = FirebaseDatabase.getInstance()
+    val databaseReference = firebaseDatabase.getReference("PersonDetails")
+
+    databaseReference.child(personDetails.emailid.replace(".", ","))
+        .setValue(personDetails)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Toast.makeText(context, "You Registered Successfully", Toast.LENGTH_SHORT)
+                    .show()
+
+            } else {
+                Toast.makeText(
+                    context,
+                    "Registration Failed",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+        .addOnFailureListener { _ ->
+            Toast.makeText(
+                context,
+                "Something went wrong",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+}
+
+data class PersonDetails(
+    var name : String = "",
+    var emailid : String = "",
+    var age : String = "",
+    var weight: String="",
+    var password: String = ""
+)
 
 @Preview(showBackground = true)
 @Composable
