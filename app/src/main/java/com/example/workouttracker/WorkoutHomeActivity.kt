@@ -1,5 +1,6 @@
 package com.example.workouttracker
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -33,6 +34,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -43,6 +45,13 @@ class WorkoutHomeActivity : ComponentActivity() {
             WorkoutHomeScreen()
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun WorkoutHomeScreenPreview()
+{
+    WorkoutHomeScreen()
 }
 
 
@@ -137,7 +146,7 @@ fun WorkoutHomeScreen() {
                                 .width(100.dp)
                                 .height(100.dp)
                                 .clickable {
-
+                                    context.startActivity(Intent(context, AddWorkoutPlanActivity::class.java))
                                 },
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
