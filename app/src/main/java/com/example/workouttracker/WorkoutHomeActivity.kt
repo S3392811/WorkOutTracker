@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -49,8 +50,7 @@ class WorkoutHomeActivity : ComponentActivity() {
 
 @Preview(showBackground = true)
 @Composable
-fun WorkoutHomeScreenPreview()
-{
+fun WorkoutHomeScreenPreview() {
     WorkoutHomeScreen()
 }
 
@@ -79,22 +79,30 @@ fun WorkoutHomeScreen() {
             ) {
                 // Image and Arrow Button
                 Column(
-                    modifier = Modifier.align(Alignment.Center)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
 
+                    Spacer(modifier = Modifier.height(12.dp))
                     Image(
                         painter = painterResource(id = R.drawable.ic_workout_two), // Replace with your image
                         contentDescription = "Login Image",
                         modifier = Modifier
-                            .size(150.dp) // Adjust size as needed
+                            .size(150.dp)
+                            .align(Alignment.CenterHorizontally)
                     )
+
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
                         text = "Welcome to Workour Tracker",
-                        fontSize = 12.sp,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
-                        color = Color.White
+                        color = Color.White,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
+                    Spacer(modifier = Modifier.height(12.dp))
+
 
                 }
 
@@ -146,7 +154,12 @@ fun WorkoutHomeScreen() {
                                 .width(100.dp)
                                 .height(100.dp)
                                 .clickable {
-                                    context.startActivity(Intent(context, AddWorkoutPlanActivity::class.java))
+                                    context.startActivity(
+                                        Intent(
+                                            context,
+                                            AddWorkoutPlanActivity::class.java
+                                        )
+                                    )
                                 },
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -211,6 +224,12 @@ fun WorkoutHomeScreen() {
                                 .height(100.dp)
                                 .clickable {
                                     Selection.pageSelected = 1
+                                    context.startActivity(
+                                        Intent(
+                                            context,
+                                            WorkoutTrackerActivity::class.java
+                                        )
+                                    )
 
                                 },
                             horizontalAlignment = Alignment.CenterHorizontally

@@ -65,8 +65,19 @@ fun WorkOutStarter() {
         SplashScreen()
 
     } else {
-        context.startActivity(Intent(context, LoginActivity::class.java))
-        context.finish()
+
+        val currentStatus = WorkoutTrackerData.readLS(context)
+
+        if(currentStatus)
+        {
+            context.startActivity(Intent(context, WorkoutHomeActivity::class.java))
+            context.finish()
+        }else{
+            context.startActivity(Intent(context, LoginActivity::class.java))
+            context.finish()
+        }
+
+
     }
 
 }
@@ -92,8 +103,9 @@ fun SplashScreen() {
 
             Text(
                 text = "WorkOut Tracking App!",
+                textAlign = TextAlign.Center,
                 color = colorResource(id = R.color.black),
-                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.padding(bottom = 4.dp)
             )
 

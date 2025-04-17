@@ -224,11 +224,18 @@ fun loginUser(personDetails: PersonDetails, context: Context) {
 
     databaseReference.get().addOnCompleteListener { task ->
         if (task.isSuccessful) {
-            val donorData = task.result?.getValue(PersonDetails::class.java)
-            if (donorData != null) {
-                if (donorData.password == personDetails.password) {
+            val dbData = task.result?.getValue(PersonDetails::class.java)
+            if (dbData != null) {
+                if (dbData.password == personDetails.password) {
+
+                    WorkoutTrackerData.writeLS(context, true)
+                    WorkoutTrackerData.writeMail(context, dbData.emailid)
+                    WorkoutTrackerData.writeUserName(context, dbData.name)
 
                     Toast.makeText(context, "Login Sucessfully", Toast.LENGTH_SHORT).show()
+
+                    context.startActivity(Intent(context, WorkoutHomeActivity::class.java))
+                    (context as Activity).finish()
 
                 } else {
                     Toast.makeText(context, "Seems Incorrect Credentials", Toast.LENGTH_SHORT).show()
