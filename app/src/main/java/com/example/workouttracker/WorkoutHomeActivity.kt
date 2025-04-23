@@ -1,9 +1,13 @@
 package com.example.workouttracker
 
+import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,12 +24,25 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,10 +51,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 class WorkoutHomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -185,7 +206,12 @@ fun WorkoutHomeScreen() {
                                 .width(100.dp)
                                 .height(100.dp)
                                 .clickable {
-
+                                    context.startActivity(
+                                        Intent(
+                                            context,
+                                            SetGoalActivity::class.java
+                                        )
+                                    )
                                 },
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -201,7 +227,7 @@ fun WorkoutHomeScreen() {
 
 
                             Text(
-                                text = "Manage Workout Details",
+                                text = "Set Daily Goal",
                                 fontSize = 12.sp,
                                 textAlign = TextAlign.Center
                             )
@@ -227,7 +253,7 @@ fun WorkoutHomeScreen() {
                                     context.startActivity(
                                         Intent(
                                             context,
-                                            WorkoutTrackerActivity::class.java
+                                            WorkourEntriesActivity::class.java
                                         )
                                     )
 
@@ -257,7 +283,12 @@ fun WorkoutHomeScreen() {
                                 .height(100.dp)
                                 .clickable {
                                     Selection.pageSelected = 2
-
+                                    context.startActivity(
+                                        Intent(
+                                            context,
+                                            ContactUsActivity::class.java
+                                        )
+                                    )
                                 },
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -271,9 +302,8 @@ fun WorkoutHomeScreen() {
                             )
                             Spacer(modifier = Modifier.height(6.dp))
 
-
                             Text(
-                                text = "Access Profile",
+                                text = "Contact Us",
                                 fontSize = 12.sp,
                                 textAlign = TextAlign.Center
                             )
@@ -289,3 +319,6 @@ fun WorkoutHomeScreen() {
 object Selection {
     var pageSelected = 0
 }
+
+///////////////Workout Details Code
+

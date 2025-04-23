@@ -40,5 +40,24 @@ object WorkoutTrackerData {
         return userLogin.getString("USERMAIL", "")!!
     }
 
+    fun setGoal(context: Context, duration: Int,calories: Int) {
+        val userLogin = context.getSharedPreferences("USER_DETAILS", Context.MODE_PRIVATE)
+        val editor = userLogin.edit()
+        editor.putInt("DURATION", duration).apply()
+        editor.putInt("CALORIES",calories).apply()
+    }
+
+    fun getDuration(context: Context): Int {
+        val userLogin = context.getSharedPreferences("USER_DETAILS", Context.MODE_PRIVATE)
+        return userLogin.getInt("DURATION", 0)
+    }
+
+    fun getCalories(context: Context): Int {
+        val userLogin = context.getSharedPreferences("USER_DETAILS", Context.MODE_PRIVATE)
+        return userLogin.getInt("CALORIES", 0)
+    }
+
+
+
 
 }
