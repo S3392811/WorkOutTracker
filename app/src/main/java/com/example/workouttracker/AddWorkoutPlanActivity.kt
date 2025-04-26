@@ -1,14 +1,13 @@
 package com.example.workouttracker
 
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,8 +19,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
@@ -29,6 +31,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -41,18 +44,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -61,13 +61,11 @@ class AddWorkoutPlanActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-//            AddWorkoutScreen()
 
             val dbHelper = WorkoutDatabaseHelper(this)
             AddWorkoutScreen(helper = dbHelper)
 
 
-//            AddWorkoutScreen()
         }
     }
 }
@@ -76,7 +74,6 @@ class AddWorkoutPlanActivity : ComponentActivity() {
 @Composable
 fun AddWorkoutScreenPreview() {
 
-//    WorkoutEntryForm(onSubmit = {})
     AddWorkoutScreen()
 }
 
@@ -259,8 +256,24 @@ fun AddWorkoutScreen(helper: WorkoutDatabaseHelper) {
 
     val context = LocalContext.current
 
-    val date = remember { LocalDate.now().toString() }
+//    val date = remember { LocalDate.now().toString() }
     val time = remember { LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")) }
+
+    var workoutDate by remember { mutableStateOf("") }
+    val calendar = Calendar.getInstance()
+
+    val datePicker = DatePickerDialog(
+        context,
+        { _, y, m, d ->
+//            expiryDate = String.format("%04d-%02d-%02d", y, m + 1, d)
+//            workoutDate = String.format("%02d-%02d-%04d", d, m + 1, y)
+            workoutDate = String.format("%04d-%02d-%02d", y, m + 1, d)  // → 2025-04-25
+
+        },
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
+    )
 
     Column(Modifier.fillMaxSize()) {
 //        Text("Add Workout", style = MaterialTheme.typography.titleLarge)
@@ -327,25 +340,52 @@ fun AddWorkoutScreen(helper: WorkoutDatabaseHelper) {
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(checked = isCompleted, onCheckedChange = { isCompleted = it })
-                Text("Mark as Completed")
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+                    .height(50.dp)
+                    .background(Color.LightGray, MaterialTheme.shapes.medium)
+                    .padding(horizontal = 16.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Text(
+                    text = workoutDate.ifEmpty { "Workout Date" },
+                    color = if (workoutDate.isEmpty()) Color.Gray else Color.Black
+                )
+                Icon(
+                    imageVector = Icons.Default.DateRange, // Replace with your desired icon
+                    contentDescription = "Date Icon",
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .size(24.dp)
+                        .clickable {
+                            datePicker.show()
+                        },
+                    tint = Color.DarkGray
+                )
             }
+
+//            Row(verticalAlignment = Alignment.CenterVertically) {
+//                Checkbox(checked = isCompleted, onCheckedChange = { isCompleted = it })
+//                Text("Mark as Completed")
+//            }
 
             Button(onClick = {
                 helper.insertWorkout(
                     WorkoutEntity(
-                        date = date,
+                        date = workoutDate,
                         time = time,
                         type = type,
                         completed = completed,
                         duration = duration.toInt(),
                         calories = calories.toIntOrNull() ?: 0,
-                        status = isCompleted
+                        status = true
                     )
                 )
 
                 Toast.makeText(context, "Saved Successfully", Toast.LENGTH_SHORT).show()
+                (context as Activity).finish()
             }) {
                 Text("Save")
             }

@@ -150,12 +150,12 @@ fun LoginScreen() {
                     .clickable {
                         when {
                             useremail.isEmpty() -> {
-//                            Toast.makeText(context, " Please Enter Mail", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Heads up! You forgot to type your email.", Toast.LENGTH_SHORT).show()
                             }
 
                             userpassword.isEmpty() -> {
-//                            Toast.makeText(context, " Please Enter Password", Toast.LENGTH_SHORT)
-//                                .show()
+                            Toast.makeText(context, "Heads up! You forgot to type your Password", Toast.LENGTH_SHORT)
+                                .show()
                             }
 
                             else -> {
@@ -228,9 +228,9 @@ fun loginUser(personDetails: PersonDetails, context: Context) {
             if (dbData != null) {
                 if (dbData.password == personDetails.password) {
 
-                    WorkoutTrackerData.writeLS(context, true)
-                    WorkoutTrackerData.writeMail(context, dbData.emailid)
-                    WorkoutTrackerData.writeUserName(context, dbData.name)
+                    FitnessPrefs.updateLoginFlag(context, true)
+                    FitnessPrefs.saveContactEmail(context, dbData.emailid)
+                    FitnessPrefs.saveDisplayName(context, dbData.name)
 
                     Toast.makeText(context, "Login Sucessfully", Toast.LENGTH_SHORT).show()
 

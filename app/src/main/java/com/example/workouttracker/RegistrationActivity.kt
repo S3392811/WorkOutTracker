@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -224,24 +222,24 @@ fun RegistrationScreen() {
                     .clickable {
                         when {
                             useremail.isEmpty() -> {
-//                            Toast.makeText(context, " Please Enter Mail", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Heads up! You forgot to type your email", Toast.LENGTH_SHORT).show()
                             }
 
                             userName.isEmpty() -> {
-//                            Toast.makeText(context, " Please Enter Password", Toast.LENGTH_SHORT)
-//                                .show()
+                            Toast.makeText(context, "Heads up! You forgot to type your Name", Toast.LENGTH_SHORT)
+                                .show()
                             }
                             userAge.isEmpty() -> {
-//                            Toast.makeText(context, " Please Enter Password", Toast.LENGTH_SHORT)
-//                                .show()
+                            Toast.makeText(context, "Heads up! You forgot to type your age", Toast.LENGTH_SHORT)
+                                .show()
                             }
                             userWeight.isEmpty() -> {
-//                            Toast.makeText(context, " Please Enter Password", Toast.LENGTH_SHORT)
-//                                .show()
+                            Toast.makeText(context, "Heads up! You forgot to type your Weight", Toast.LENGTH_SHORT)
+                                .show()
                             }
                             userpassword.isEmpty() -> {
-//                            Toast.makeText(context, " Please Enter Password", Toast.LENGTH_SHORT)
-//                                .show()
+                            Toast.makeText(context, "Heads up! You forgot to type your Password", Toast.LENGTH_SHORT)
+                                .show()
                             }
 
                             else -> {
@@ -313,6 +311,10 @@ fun registerUser(personDetails: PersonDetails, context: Context) {
         .setValue(personDetails)
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {
+
+                context.startActivity(Intent(context, LoginActivity::class.java))
+                (context as Activity).finish()
+
                 Toast.makeText(context, "You Registered Successfully", Toast.LENGTH_SHORT)
                     .show()
 

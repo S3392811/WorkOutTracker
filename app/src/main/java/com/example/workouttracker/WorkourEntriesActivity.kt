@@ -18,16 +18,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -40,6 +46,8 @@ class WorkourEntriesActivity : ComponentActivity() {
         setContent {
             val dbHelper = WorkoutDatabaseHelper(this)
             WorkoutEntryListScreen(helper = dbHelper)
+
+
         }
     }
 }
@@ -49,6 +57,8 @@ fun WorkoutEntryListScreen(helper: WorkoutDatabaseHelper) {
     val workoutList = remember { mutableStateListOf<WorkoutEntity>() }
 
     val context = LocalContext.current
+
+    var selectedType by remember { mutableStateOf("Daily") }
 
 
     Column(
@@ -90,32 +100,51 @@ fun WorkoutEntryListScreen(helper: WorkoutDatabaseHelper) {
                 .padding(12.dp)
         ) {
 
-            // Load workouts from database
-            LaunchedEffect(Unit) {
-                val data = helper.getWorkouts()
-                workoutList.clear()
-                workoutList.addAll(data)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                GoalChip("Daily", selectedType) { selectedType = "Daily" }
+                GoalChip("Weekly", selectedType) { selectedType = "Weekly" }
             }
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                if (workoutList.isEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("No workout entries found.")
-                    }
-                } else {
-                    LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        items(workoutList.size) { entry ->
-                            WorkoutEntryCard(workoutList[entry])
+            if (selectedType == "Daily") {
+                // Load workouts from database
+                LaunchedEffect(Unit) {
+                    val data = helper.getWorkouts()
+                    workoutList.clear()
+                    workoutList.addAll(data)
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                ) {
+                    if (workoutList.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("No workout entries found.")
+                        }
+                    } else {
+                        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            items(workoutList.size) { entry ->
+                                WorkoutEntryCard(workoutList[entry])
+                            }
                         }
                     }
                 }
+            } else {
+                val weeklyGoalDuration = FitnessPrefs.fetchMinutesGoal(context, "Weekly")
+                val weeklyGoalCalories = FitnessPrefs.fetchCaloriesGoal(context, "Weekly")
+
+                WeeklyGoalProgressScreen(
+                    dbHelper = helper,
+                    weeklyGoalDuration = weeklyGoalDuration,
+                    weeklyGoalCalories = weeklyGoalCalories
+                )
             }
         }
     }
@@ -137,24 +166,118 @@ fun WorkoutEntryCard(entry: WorkoutEntity) {
             )
         )
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            Text("${entry.date} at ${entry.time}", style = MaterialTheme.typography.titleMedium)
-            Text("Workout Type: ${entry.type}", style = MaterialTheme.typography.bodyMedium)
-            Text("Workouts: ${entry.completed}", style = MaterialTheme.typography.bodyMedium)
-            Text("Duration: ${entry.duration} min", style = MaterialTheme.typography.bodyMedium)
-            Text("Calories: ${entry.calories} kcal", style = MaterialTheme.typography.bodyMedium)
-            Text(
-                "Completed: ${if (entry.status) "Yes" else "No"}",
-                style = MaterialTheme.typography.bodyMedium
-            )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp), verticalAlignment = Alignment.CenterVertically
+        ) {
 
-            val goalDuration = WorkoutTrackerData.getDuration(context = context)
-            val calories = WorkoutTrackerData.getCalories(context)
+            Column(modifier = Modifier.weight(1f)) {
+                Text("${entry.date} at ${entry.time}", style = MaterialTheme.typography.titleMedium)
+                Text("Workout Type: ${entry.type}", style = MaterialTheme.typography.bodyMedium)
+                Text("Workouts: ${entry.completed}", style = MaterialTheme.typography.bodyMedium)
+                Text("Duration: ${entry.duration} min", style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    "Calories: ${entry.calories} kcal",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    "Completed: ${if (entry.status) "Yes" else "No"}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
 
-            if (entry.duration > goalDuration && entry.calories > calories) {
-                Text("Status : ✅ Goal Achieved")
-            } else {
-                Text("Status : ❌ Goal Missed")
+                val goalDuration = FitnessPrefs.fetchMinutesGoal(context = context, "Daily")
+                val calories = FitnessPrefs.fetchMinutesGoal(context, "Daily")
+
+                if (entry.duration > goalDuration && entry.calories > calories) {
+                    Text("Status : ✅ Daily Goal Achieved")
+                } else {
+                    Text("Status : ❌ Daily Goal Missed")
+                }
+            }
+
+
+            when {
+                (entry.type == "Cardio") -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.iv_cardio),
+                        contentDescription = "Cardio"
+                    )
+                }
+
+                (entry.type == "Strength") -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.iv_strength),
+                        contentDescription = "Strength"
+                    )
+                }
+
+                (entry.type == "HIIT") -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.iv_hiit),
+                        contentDescription = "HIIT"
+                    )
+                }
+
+                (entry.type == "Yoga") -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.iv_yoga),
+                        contentDescription = "Yoga"
+                    )
+                }
+
+                (entry.type == "Custom") -> {
+                    Image(
+                        painter = painterResource(id = R.drawable.iv_custom),
+                        contentDescription = "Custom"
+                    )
+                }
+
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+        }
+    }
+}
+
+
+@Composable
+fun WeeklyGoalProgressScreen(
+    dbHelper: WorkoutDatabaseHelper,
+    weeklyGoalDuration: Int,
+    weeklyGoalCalories: Int
+) {
+    var summary = remember { dbHelper.getWeeklyGoalSummary(weeklyGoalDuration, weeklyGoalCalories) }
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text("Weekly Goal Progress (Last 4 Weeks)", style = MaterialTheme.typography.titleMedium)
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        summary = summary.reversed()
+
+        summary.forEach { (weekRange, percent, totalDuration) ->
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                elevation = CardDefaults.cardElevation(4.dp)
+            ) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Text(weekRange, fontWeight = FontWeight.Bold)
+                    Text("Total Duration: $totalDuration min")
+                    Text("Progress: $percent%")
+
+                    LinearProgressIndicator(
+                        progress = percent / 100f,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(12.dp)
+                            .clip(RoundedCornerShape(6.dp)),
+                        color = if (percent >= 100) Color(0xFF66BB6A) else Color(0xFFFFA726),
+                        trackColor = Color.LightGray
+                    )
+                }
             }
         }
     }

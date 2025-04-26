@@ -4,6 +4,9 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class WorkoutDatabaseHelper(context: Context) :
     SQLiteOpenHelper(context, "workout.db", null, 1) {
@@ -123,6 +126,50 @@ class WorkoutDatabaseHelper(context: Context) :
         cursor.close()
         return result
     }
+
+    fun getWeeklyGoalSummary(weeklyGoalDuration: Int, weeklyGoalCalories: Int): List<Triple<String, Int, Int>> {
+        val db = readableDatabase
+        val calendar = Calendar.getInstance()
+
+        val results = mutableListOf<Triple<String, Int, Int>>() // WeekRange, percentage, totalDuration
+
+        for (i in 0 until 4) {
+            val end = calendar.time
+            calendar.add(Calendar.DATE, -6)
+            val start = calendar.time
+            val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+            val startDate = formatter.format(start)
+            val endDate = formatter.format(end)
+
+            val cursor = db.rawQuery(
+                """
+            SELECT SUM(duration) as totalDuration, SUM(calories) as totalCalories 
+            FROM workouts 
+            WHERE date BETWEEN ? AND ?
+            """, arrayOf(startDate, endDate)
+            )
+
+            if (cursor.moveToFirst()) {
+                val duration = cursor.getInt(cursor.getColumnIndexOrThrow("totalDuration"))
+                val calories = cursor.getInt(cursor.getColumnIndexOrThrow("totalCalories"))
+
+                val percentage = if (weeklyGoalDuration > 0 && weeklyGoalCalories > 0) {
+                    val durationPercent = (duration * 100) / weeklyGoalDuration
+                    val caloriesPercent = (calories * 100) / weeklyGoalCalories
+                    minOf(durationPercent, caloriesPercent)
+                } else 0
+
+                results.add(Triple("$startDate to $endDate", percentage.coerceAtMost(100), duration))
+            }
+
+            cursor.close()
+            calendar.add(Calendar.DATE, -1) // Move to the previous week
+        }
+
+        return results.reversed() // So the oldest is first
+    }
+
 }
 
 data class WorkoutEntity(

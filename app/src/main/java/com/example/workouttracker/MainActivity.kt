@@ -66,7 +66,7 @@ fun WorkOutStarter() {
 
     } else {
 
-        val currentStatus = WorkoutTrackerData.readLS(context)
+        val currentStatus = FitnessPrefs.isUserAuthenticated(context)
 
         if(currentStatus)
         {

@@ -1,12 +1,7 @@
 package com.example.workouttracker
 
 import android.app.Activity
-import android.content.ActivityNotFoundException
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -20,39 +15,32 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import de.cketti.mailto.EmailIntentBuilder
 
-class ContactUsActivity : ComponentActivity() {
+class AboutUsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ContactUsScreen(this)
-
-
+            AboutUsScreen()
         }
     }
 }
 
-@Composable
-fun ContactUsScreen(context: Context) {
-    var message by remember { mutableStateOf("") }
-    val emailAddress = "nikhilsevva5011@gmail.com"
 
+@Composable
+fun AboutUsScreen() {
+
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -79,7 +67,7 @@ fun ContactUsScreen(context: Context) {
             Spacer(modifier = Modifier.width(16.dp))
 
             Text(
-                text = "Contact Us",
+                text = "AboutUs",
                 style = MaterialTheme.typography.titleLarge,
                 color = Color.White,
                 fontWeight = FontWeight.Bold
@@ -90,46 +78,23 @@ fun ContactUsScreen(context: Context) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(12.dp)
+                .padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            OutlinedTextField(
-                value = message,
-                onValueChange = { message = it },
-                label = { Text("Enter your message") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp),
-                singleLine = false,
-                maxLines = 10
+            Spacer(modifier = Modifier.height(24.dp))
+
+
+            Text(
+                text = "Welcome to the Workout Tracker App – your fitness journey, made smarter and simpler!\n" +
+                        "Developed by Nikhil, this app is built to help you stay consistent, motivated, and in control of your workouts. Whether you’re just starting out or are a seasoned fitness enthusiast, our goal is to support your progress every step of the way.\n" +
+                        "Thanks for letting us be a part of your fitness story!",
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Justify
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                onClick = {
-                    sendEmail(context, emailAddress, "Support Request", message)
-                },
-                modifier = Modifier.align(Alignment.End)
-            ) {
-                Text("Send")
-            }
         }
-    }
-}
-
-
-fun sendEmail(context: Context, to: String, subject: String, body: String) {
-    val intent = Intent(Intent.ACTION_SENDTO).apply {
-        data = Uri.parse("mailto:") // Ensures only email apps handle this
-        putExtra(Intent.EXTRA_EMAIL, arrayOf(to))
-        putExtra(Intent.EXTRA_SUBJECT, subject)
-        putExtra(Intent.EXTRA_TEXT, body)
-    }
-
-    try {
-        context.startActivity(Intent.createChooser(intent, "Send Email"))
-    } catch (e: ActivityNotFoundException) {
-        Toast.makeText(context, "No email app found", Toast.LENGTH_SHORT).show()
     }
 }

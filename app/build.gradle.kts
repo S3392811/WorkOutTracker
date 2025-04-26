@@ -71,4 +71,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.firebase.database.ktx)
+
+    implementation("de.cketti.mailto:email-intent-builder:2.0.0")
 }
