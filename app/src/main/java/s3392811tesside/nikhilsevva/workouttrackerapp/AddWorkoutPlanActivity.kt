@@ -1,4 +1,4 @@
-package com.example.workouttracker
+package s3392811tesside.nikhilsevva.workouttrackerapp
 
 import android.app.Activity
 import android.app.DatePickerDialog
@@ -25,8 +25,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -49,12 +47,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import java.text.SimpleDateFormat
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
-import java.util.Date
-import java.util.Locale
 
 class AddWorkoutPlanActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -74,189 +69,19 @@ class AddWorkoutPlanActivity : ComponentActivity() {
 @Composable
 fun AddWorkoutScreenPreview() {
 
-    AddWorkoutScreen()
 }
-
-@Composable
-fun AddWorkoutScreen() {
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = Color(0xFF6200EE))
-                .padding(vertical = 6.dp, horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.baseline_arrow_back_ios_36),
-                contentDescription = "Logo",
-                modifier = Modifier
-                    .width(36.dp)
-                    .height(36.dp)
-                    .clickable {
-                    }
-            )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Text(
-                text = "Add Workout",
-                style = MaterialTheme.typography.titleLarge,
-                color = Color.White,
-                fontWeight = FontWeight.Bold
-            )
-
-        }
-
-        WorkoutEntryForm(onSubmit = {})
-
-    }
-}
-
-@Composable
-fun WorkoutEntryForm(
-    onSubmit: (WorkoutEntry) -> Unit
-) {
-    val workoutTypes = listOf("Cardio", "Strength", "HIIT", "Yoga", "Custom")
-    val selectedType = remember { mutableStateOf(workoutTypes[0]) }
-    val workoutsCompleted = remember { mutableStateOf("") }
-    val duration = remember { mutableStateOf("") }
-    val caloriesBurned = remember { mutableStateOf("") }
-    val isCompleted = remember { mutableStateOf(false) }
-
-    val currentDateTime = remember {
-        SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(Date())
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        Text("Today's Date & Time: $currentDateTime", style = MaterialTheme.typography.bodyMedium)
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text("Select Workout Type:")
-        DropdownMenuWithLabel(
-            options = workoutTypes,
-            selectedOption = selectedType.value,
-            onOptionSelected = { selectedType.value = it }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = workoutsCompleted.value,
-            onValueChange = { workoutsCompleted.value = it },
-            label = { Text("Workouts Completed Today") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = duration.value,
-            onValueChange = { duration.value = it },
-            label = { Text("Duration (minutes)") },
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-        )
-
-        OutlinedTextField(
-            value = caloriesBurned.value,
-            onValueChange = { caloriesBurned.value = it },
-            label = { Text("Total Calories Burned") },
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-        )
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(
-                checked = isCompleted.value,
-                onCheckedChange = { isCompleted.value = it }
-            )
-            Text("Mark as completed")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = {
-                onSubmit(
-                    WorkoutEntry(
-                        dateTime = currentDateTime,
-                        type = selectedType.value,
-                        workouts = workoutsCompleted.value,
-                        duration = duration.value,
-                        calories = caloriesBurned.value,
-                        completed = isCompleted.value
-                    )
-                )
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Submit Workout")
-        }
-    }
-}
-
-@Composable
-fun DropdownMenuWithLabel(
-    options: List<String>,
-    selectedOption: String,
-    onOptionSelected: (String) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Box {
-        OutlinedTextField(
-            value = selectedOption,
-            onValueChange = {},
-            readOnly = true,
-            label = { Text("Workout Type") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = true }
-        )
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(text = { Text(option) }, onClick = {
-                    onOptionSelected(option)
-                    expanded = false
-                })
-            }
-        }
-    }
-}
-
-data class WorkoutEntry(
-    val dateTime: String,
-    val type: String,
-    val workouts: String,
-    val duration: String,
-    val calories: String,
-    val completed: Boolean
-)
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddWorkoutScreen(helper: WorkoutDatabaseHelper) {
     var type by remember { mutableStateOf("Cardio") }
-    var completed by remember { mutableStateOf("") }
+    var completed by remember { mutableStateOf("Yes") }
     var duration by remember { mutableStateOf("") }
     var calories by remember { mutableStateOf("") }
     var isCompleted by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
 
-//    val date = remember { LocalDate.now().toString() }
     val time = remember { LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")) }
 
     var workoutDate by remember { mutableStateOf("") }
@@ -265,8 +90,7 @@ fun AddWorkoutScreen(helper: WorkoutDatabaseHelper) {
     val datePicker = DatePickerDialog(
         context,
         { _, y, m, d ->
-//            expiryDate = String.format("%04d-%02d-%02d", y, m + 1, d)
-//            workoutDate = String.format("%02d-%02d-%04d", d, m + 1, y)
+
             workoutDate = String.format("%04d-%02d-%02d", y, m + 1, d)  // → 2025-04-25
 
         },
@@ -276,7 +100,6 @@ fun AddWorkoutScreen(helper: WorkoutDatabaseHelper) {
     )
 
     Column(Modifier.fillMaxSize()) {
-//        Text("Add Workout", style = MaterialTheme.typography.titleLarge)
 
         Row(
             modifier = Modifier
@@ -318,24 +141,24 @@ fun AddWorkoutScreen(helper: WorkoutDatabaseHelper) {
 
             DropdownMenuWorkoutType(selectedType = type, onTypeSelected = { type = it })
 
-            OutlinedTextField(
-                value = completed,
-                onValueChange = { completed = it },
-                label = { Text("Workouts Completed") },
-                modifier = Modifier.fillMaxWidth()
-            )
+//            OutlinedTextField(
+//                value = completed,
+//                onValueChange = { completed = it },
+//                label = { Text("Workouts Completed") },
+//                modifier = Modifier.fillMaxWidth()
+//            )
 
             OutlinedTextField(
                 value = duration,
                 onValueChange = { duration = it },
-                label = { Text("Duration") },
+                label = { Text("Duration (Mins)") },
                 modifier = Modifier.fillMaxWidth()
             )
 
             OutlinedTextField(
                 value = calories,
                 onValueChange = { calories = it },
-                label = { Text("Calories Burned") },
+                label = { Text("Calories Burned (KCal)") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -366,10 +189,7 @@ fun AddWorkoutScreen(helper: WorkoutDatabaseHelper) {
                 )
             }
 
-//            Row(verticalAlignment = Alignment.CenterVertically) {
-//                Checkbox(checked = isCompleted, onCheckedChange = { isCompleted = it })
-//                Text("Mark as Completed")
-//            }
+
 
             Button(onClick = {
                 helper.insertWorkout(

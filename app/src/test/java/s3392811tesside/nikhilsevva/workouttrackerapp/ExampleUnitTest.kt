@@ -1,4 +1,4 @@
-package com.example.workouttracker
+package s3392811tesside.nikhilsevva.workouttrackerapp
 
 import org.junit.Test
 

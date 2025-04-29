@@ -1,4 +1,4 @@
-package com.example.workouttracker
+package s3392811tesside.nikhilsevva.workouttrackerapp
 
 import android.app.Activity
 import android.content.Intent
@@ -10,11 +10,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,13 +69,11 @@ fun WorkOutStarter() {
 
     } else {
 
-        val currentStatus = FitnessPrefs.isUserAuthenticated(context)
 
-        if(currentStatus)
-        {
+        if (FitnessPrefs.isUserAuthenticated(context)) {
             context.startActivity(Intent(context, WorkoutHomeActivity::class.java))
             context.finish()
-        }else{
+        } else {
             context.startActivity(Intent(context, LoginActivity::class.java))
             context.finish()
         }
@@ -87,7 +88,7 @@ fun SplashScreen() {
 
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize().padding(WindowInsets.systemBars.asPaddingValues()),
     ) {
 
         Column(
@@ -121,8 +122,8 @@ fun SplashScreen() {
 
             Image(
                 modifier = Modifier.size(200.dp, 200.dp),
-                painter = painterResource(id = R.drawable.ic_workout_two),
-                contentDescription = "Grocery Store Manager",
+                painter = painterResource(id = R.drawable.workout_icon),
+                contentDescription = "Workout Tracker",
             )
 
 
@@ -132,7 +133,7 @@ fun SplashScreen() {
         }
 
         Image(
-            painter = painterResource(id = R.drawable.wt_wave_down), // Replace with your actual SVG drawable
+            painter = painterResource(id = R.drawable.wt_wave_down),
             contentDescription = null,
             contentScale = ContentScale.Fit,
             modifier = Modifier.fillMaxWidth()
@@ -158,6 +159,7 @@ fun SplashScreen() {
         )
 
 
+        Spacer(modifier = Modifier.height(30.dp))
     }
 
 }

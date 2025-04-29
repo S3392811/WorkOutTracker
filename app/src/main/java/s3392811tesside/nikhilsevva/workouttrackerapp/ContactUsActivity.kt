@@ -1,4 +1,4 @@
-package com.example.workouttracker
+package s3392811tesside.nikhilsevva.workouttrackerapp
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
@@ -15,10 +15,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -35,7 +38,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import de.cketti.mailto.EmailIntentBuilder
 
 class ContactUsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +58,7 @@ fun ContactUsScreen(context: Context) {
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize().padding(WindowInsets.systemBars.asPaddingValues())
     ) {
         Row(
             modifier = Modifier

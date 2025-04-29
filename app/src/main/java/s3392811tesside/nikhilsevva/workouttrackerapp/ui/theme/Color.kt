@@ -1,4 +1,4 @@
-package com.example.workouttracker.ui.theme
+package s3392811tesside.nikhilsevva.workouttrackerapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

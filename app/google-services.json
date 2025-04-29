@@ -1,15 +1,16 @@
 {
   "project_info": {
     "project_number": "83601965481",
+    "firebase_url": "https://workouttacker-875ae-default-rtdb.firebaseio.com",
     "project_id": "workouttacker-875ae",
     "storage_bucket": "workouttacker-875ae.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:83601965481:android:cc7864916738a2447904b8",
+        "mobilesdk_app_id": "1:83601965481:android:71699e9ee6c9e78a7904b8",
         "android_client_info": {
-          "package_name": "com.example.workouttracker"
+          "package_name": "s3392811tesside.nikhilsevva.workouttrackerapp"
         }
       },
       "oauth_client": [],
