@@ -151,7 +151,8 @@ fun GoalSettingScreen(
                     if (durationGoal > 0 && calorieGoal > 0) {
                         FitnessPrefs.storeWorkoutGoal(
                             context,
-                            durationGoal.toString(), calorieGoal, selectedType.toInt()
+                            selectedType,
+                            durationGoal, calorieGoal
                         )
                         Toast.makeText(
                             context,
@@ -159,6 +160,7 @@ fun GoalSettingScreen(
                             Toast.LENGTH_SHORT
                         ).show()
                         loadGoal()
+                        (context as Activity).finish()
                     } else {
                         Toast.makeText(context, "Please enter valid goals", Toast.LENGTH_SHORT)
                             .show()
